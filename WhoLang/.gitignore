@@ -1,0 +1,8 @@
+train/dohr/*.txt
+train/*.txt
+
+# Don't ignore english, slovene and german translations
+!train/dohr/slv.txt
+!train/dohr/eng.txt
+!train/dohr/ger.txt
+!train/dohr/readme.txt
