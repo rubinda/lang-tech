@@ -184,7 +184,3 @@ class LanguageIdentifier:
               " by adding the DOHR files and inserting the filename into 'possible_langs'.")
         print("\nUsage:\n\tlt = LanguageIdentifier(n=3)\n\tlt.identify(<text|file>)\n")
         print("The model is built using translations of human rights, view the header of the file for a link.")
-
-
-lt = LanguageIdentifier(n=3)
-lt.identify('slovene.txt')

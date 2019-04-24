@@ -1,5 +1,8 @@
 train/dohr/*.txt
 train/*.txt
+.ipynb_checkpoints
+__pycache__
+.idea/
 
 # Don't ignore english, slovene and german translations
 !train/dohr/slv.txt
