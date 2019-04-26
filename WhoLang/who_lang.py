@@ -66,7 +66,9 @@ class LanguageIdentifier:
         self.possible_langs = {
             "eng": "English",
             "ger": "Deutsch",
-            "slv": "Slovensko"
+            "slv": "Slovensko",
+            "czk": 'Cesko',
+            "svk": "Slovasko",
         }
         # Ime datoteke kamor shranimo jezikovni model
         self.model_file = 'models/language_model_%d.json' % n

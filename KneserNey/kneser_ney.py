@@ -9,8 +9,9 @@
 import json
 import glob
 import string
-import nltk.data
+import nltk
 import math
+import numpy
 from collections import defaultdict
 from timeit import default_timer as timer
 
@@ -22,8 +23,6 @@ class LanguageModel:
         # Velikost n-gramov
         self.n_size = n
         self.n_grams = [defaultdict(int) for _ in range(n)]   # 0 - unigrams, 1 - bigrams, 2 - trigrams .. n-1 - n-grams
-        #self.n_grams = defaultdict(int)
-        self.n_less_one_grams = defaultdict(int)
 
     def make_ngrams(self, sentence, n):
         """ Ustvari ngrame in jih vrne kot seznam stringov"""
@@ -88,18 +87,25 @@ class LanguageModel:
         """
         if k == 1:
             # Prestej kolikokrat se pojavi beseda
-            return max(self.n_grams[k-1][k_gram] - d, 0) / sum(self.n_grams[k-1].values()) # + lambda(epsilon) * 1/V ?
-        elif k < self.n_size:
-            # Uporabi continuation count
-            return self.kneser_ney_prob(d, k-1, k_gram[1:])
+            # lambda(epsilon) = d, P(epsilon) - 1 / len(unigrams)
+            # P_kn(unigram) = max(count(unigram) - d, 0) / count(len(unigrams) + lambda(epsilon) * P(epsilon)
+            all_bigrams = len(self.n_grams[k])
+            all_unigrams = len(self.n_grams[k-1])
+            continuation_count = sum([1 for x in self.n_grams[k] if k_gram[:-1] == x[:-1]])
+            return max(continuation_count - d, 0) / all_bigrams + d / all_unigrams
         else:
             # Zazeni rekurzijo
-            all_endings = sum([self.n_grams[x] for x in self.n_grams[k-1].keys() if k_gram[:-1] == x[:-1]])
-            unique_endings = sum([k_gram[2:] == x[2:] for x in self.n_grams[k-1].keys()])
+
+            # Kolikokrat se pojavi w_i-1
+            count_w_less_1 = self.n_grams[k-2][k_gram[:-1]]
+
+            # Koliko unique nadaljevanj imamo za w_i-1
+            unique_completions = len([1 for x in self.n_grams[k-1].keys() if k_gram[:-1] == x[:-1]])
+            lambda_weight = (d / count_w_less_1) * unique_completions
 
             # lambda(w_i-n+1) * P_kn(w_i | w_i-n+2)
-            p_kn = d / unique_endings * self.kneser_ney_prob(d, k-1, k_gram[1:])
-            return max(self.n_grams[k-1][k_gram] - d, 0) / all_endings + d / unique_endings * p_kn
+            p_kn = lambda_weight * self.kneser_ney_prob(d, k-1, k_gram[1:])
+            return max(self.n_grams[k-1][k_gram] - d, 0) / count_w_less_1 + lambda_weight * p_kn
 
     def calculate_probability(self, ngram):
         """ Izracuna pogojno verjenost n-grama P(n|n-1,n-2...)"""
@@ -113,3 +119,11 @@ class LanguageModel:
         ngrams = self.make_ngrams(sentence, self.n_size)
         log_probs = [self.calculate_probability(ngram) for ngram in ngrams]
         return math.exp(sum(log_probs))
+
+    def kn_evaluate_sentence(self, sentence):
+        """ Oceni verjetnost povedi s pomocjo Kneser-Ney"""
+        ngrams = self.make_ngrams(sentence, n=self.n_size)
+        probs = []
+        for ngram in ngrams:
+            probs.append(self.kneser_ney_prob(d=0.75, k=self.n_size, k_gram=ngram))
+        return numpy.prod(probs)
