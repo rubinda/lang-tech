@@ -2,7 +2,7 @@ korpus/
 venv/
 .idea/
 
-#  Ignore the language model files (~30mb from given corpus)
+#  Ignore the language model files (json file)
 *.lm
 
 # Jupyter

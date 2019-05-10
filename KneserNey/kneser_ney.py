@@ -56,6 +56,18 @@ class LanguageModel:
                         # Izgradi k-gram (1..n) in ga dodaj v ustrezno mesto
                         # K+1, ker stejemo od 0
                         self.count_ngrams(sentence, k+1, self.n_grams[k])
+        # Ngrame, ki se pojavijo 2 ali manjkrat odstrani in nadomesti z UNK (na vsakem nivoju)
+        for kgram_count in self.n_grams:
+            ngrams_to_cut = []
+            for kgram, occurrence in kgram_count.items():
+                if occurrence <= 2:
+                    ngrams_to_cut.append(kgram)
+            # Pobrisi ven kljuce, ki se pojavijo <= 2
+            for k in ngrams_to_cut:
+                kgram_count.pop(k)
+            # Dodaj nazaj UNK, ki ima stevilo pojavitev 2 (mejo)
+            kgram_count['UNK'] = 2
+
         print(' %.2fs' % (timer() - start))
 
     def save_to_file(self, filename):
@@ -98,9 +110,13 @@ class LanguageModel:
 
             # Kolikokrat se pojavi w_i-1
             count_w_less_1 = self.n_grams[k-2][k_gram[:-1]]
+            if count_w_less_1 == 0:
+                count_w_less_1 = 2
 
             # Koliko unique nadaljevanj imamo za w_i-1
             unique_completions = len([1 for x in self.n_grams[k-1].keys() if k_gram[:-1] == x[:-1]])
+            if unique_completions == 0:
+                unique_completions = 2
             lambda_weight = (d / count_w_less_1) * unique_completions
 
             # lambda(w_i-n+1) * P_kn(w_i | w_i-n+2)
