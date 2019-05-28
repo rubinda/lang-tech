@@ -1,0 +1,18 @@
+venv/
+.idea/
+data/*.txt
+
+
+# Jupyter
+.ipynb_checkpoints
+*.py[co]
+notebook/i18n/*/LC_MESSAGES/*.mo
+notebook/i18n/*/LC_MESSAGES/nbjs.json
+notebook/static/components
+notebook/static/style/*.min.css*
+notebook/static/*/js/built/
+notebook/static/*/built/
+notebook/static/built/
+notebook/static/*/js/main.min.js*
+notebook/static/lab/*bundle.js
+__pycache__
