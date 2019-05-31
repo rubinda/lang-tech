@@ -1,0 +1,7 @@
+venv/
+kneser_ney.py
+
+.idea/
+__pycache__
+
+*.lm
