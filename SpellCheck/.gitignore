@@ -5,3 +5,8 @@ kneser_ney.py
 __pycache__
 
 *.lm
+*.aux
+*.log
+*.out
+*.dvi
+*.synctex.gz

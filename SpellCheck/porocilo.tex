@@ -63,16 +63,17 @@ Implementirajte program za popravljanje pravopisnih napak. Program naj vsebuje n
 
 \section{Poročilo}
 
-Rešitev sem implementiral kot Python program (za delovanje potrebuje kneser_ney iz prejšnje naloge), ki je priložen poročilu (\textit{spellcheck.py}). V sklopu ocenjevanja, sem uporabil 100 povedi iz priloženega \textit{holbrook.dat}, kjer se pojavi 1 napaka. Po zagonu programa se generirajo datoteke, ki vsebujejo dejanske povedi (razbrane iz podanega korpusa), povedi popravljenje s pomočjo Kneser-Ney glajenja in povedi, kjer se za besedo kjer je definirana napaka uporabi tista z največjo verjetnostjo urejanja. Rezultati so sledeči:
+Rešitev sem implementiral kot Python program (za delovanje potrebuje kneser\_ney iz prejšnje naloge), ki je priložen poročilu (\textit{spellcheck.py}). V sklopu ocenjevanja, sem uporabil 100 povedi iz priloženega \textit{holbrook.dat}, kjer se pojavi 1 napaka. Po zagonu programa se generirajo datoteke, ki vsebujejo dejanske povedi (razbrane iz podanega korpusa), povedi popravljenje s pomočjo Kneser-Ney glajenja in povedi, kjer se za besedo kjer je definirana napaka uporabi tista z največjo verjetnostjo urejanja. Rezultati so sledeči:
 
 \begin{center}
   \begin{tabular}{ | l | c | r |}
     \hline
-    Metoda 				& Uspešnost 	& Št. razlik \\ \hline
-    w\\ KN 				& 0.30 %		& 63 \\ \hline
-    verjetnost urejanja 	& 0.5 % 		& 50 \\
-    \hline
+    Metoda 				& Uspešnost 	& Št. zadetih besed \\ \hline
+    s KN 				& 0.267		& 27/101 \\ \hline
+    verjetnost urejanja 	& 0.198		& 20/101 \\ \hline
+ 
   \end{tabular}
-  \label{Tabela rezultatov, KN je metoda, kjer verjetnost povedi ocenjujemo s pomočjo Kneser-Ney, pri verjetnosti urejanja pa le določimo, katera beseda je najverjetnejša za podano napako. Uspešnost meri koliko napak je uspešno popravila metoda, Število razlik pa pove, koliko besed se loči od pravilne povedi (torej lahko se zgodi, da je pri Kneser-Ney ocenila, da so še druge besede pri pravilno zapisanih verjetnejše).
 \end{center}
+V tabeli rezultatov je KN metoda, kjer verjetnost povedi ocenjujemo s pomočjo Kneser-Ney, pri verjetnosti urejanja pa le določimo, katera beseda je najverjetnejša za podano napako. Uspešnost meri koliko napak je uspešno popravila metoda, Število razlik pa pove, koliko besed se loči od pravilne povedi (torej lahko se zgodi, da je pri Kneser-Ney ocenila, da so še druge besede pri pravilno zapisanih verjetnejše).
+
 \end{document}
