@@ -74,8 +74,8 @@ class SpellCheck:
         self.build_model()
         self.kn = LanguageModel()
         self.kn.read_from_file('big_model.lm')
-        # self.kn.train(folder='corpus/')
-        # self.kn.save_to_file("big_model.lm")
+        #self.kn.train(folder='corpus/')
+        #self.kn.save_to_file("big_model.lm")
         self.V_len = len(self.model.values())
 
     def build_model(self):
@@ -267,8 +267,9 @@ class SpellCheck:
 
 
 # Example usage:
-# sp = SpellCheck()
-# sp.evaluate_model()
+# p = SpellCheck()
+# print(p.check_sentence("siter"))
+#sp.evaluate_model()
 # sp.evaluate_get_actual()
 # sp.evaluate_best_candidate()
 # p, l = compare_words('corrected.dat')

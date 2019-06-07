@@ -39,18 +39,22 @@ class LanguageModel:
         for i in range(len(words) - n + 1):
             counter_dict[tuple((words[i:i+n]))] += 1
 
+    def get_sentences(self, file):
+        """ Vrne vse povedi v datoteki (pricakuje se slovensko besedilo """
+        slovene_tokenizer = nltk.data.load('tokenizers/punkt/slovene.pickle')
+        remove_punc = str.maketrans("", "", string.punctuation + '»«−…•')
+        sentences = slovene_tokenizer.tokenize(''.join(file.readlines()))
+        return [s.translate(remove_punc) for s in sentences]
+
     def train(self, folder='korpus/'):
         """ Prebere vse tekstovne datoteke znotraj corpus_folder in zgradi model """
         print('Learning from .txt files ...', end='')
         start = timer()
-        slovene_tokenizer = nltk.data.load('tokenizers/punkt/slovene.pickle')
-        remove_punc = str.maketrans("", "", string.punctuation + '»«−…')
         txt_files = glob.glob(folder + '*.txt')
         for filename in txt_files:
             with open(filename) as f:
-                sentences = slovene_tokenizer.tokenize(''.join(f.readlines()))
+                sentences = self.get_sentences(f)
                 for sentence in sentences:
-                    sentence = sentence.translate(remove_punc)
                     # Zgradi besedne unigram, bigram ... n-gram
                     for k in range(self.n_size):
                         # Izgradi k-gram (1..n) in ga dodaj v ustrezno mesto
@@ -143,3 +147,24 @@ class LanguageModel:
         for ngram in ngrams:
             probs.append(self.kneser_ney_prob(d=0.75, k=self.n_size, k_gram=ngram))
         return numpy.prod(probs)
+
+    def sentence_perplexity(self, sentence):
+        """ Izracuna perpleksnost ene povedi """
+        words = len(sentence.split(' '))
+        kn_score = self.kn_evaluate_sentence(sentence)
+        return kn_score ** (-1.0 / words)
+
+    def file_perplexity(self, filename):
+        """  Izracuna povprecno perpleksnost povedi v datoteki """
+        perplexes = []
+        print('Calculating file perplexity ...', end=' ')
+        start = timer()
+        file_len = 0;
+        with open(filename) as file:
+            for sentence in self.get_sentences(file):
+                if len(sentence.split(' ')) < 1:
+                    continue
+                file_len += 1
+                perplexes.append(math.log(self.kn_evaluate_sentence(sentence)))
+        print(' %.2fs' % (timer() - start))
+        return math.pow(10, (sum(perplexes) * -1.0 / file_len))
